@@ -8,7 +8,9 @@ export default function LoanApplication() {
         email: "",
         phone: "",
         ssn: "",
-        requestedAmount: ""
+        requestedAmount: "",
+        employmentStatus: "",
+        monthlyIncome: ""
     });
 
     const [loading, setLoading] = useState(false);
@@ -27,7 +29,9 @@ export default function LoanApplication() {
             email: "",
             phone: "",
             ssn: "",
-            requestedAmount: ""
+            requestedAmount: "",
+            employmentStatus: "",
+            monthlyIncome: ""
         });
         setResult(null);
         setError(null);
@@ -51,12 +55,17 @@ export default function LoanApplication() {
             setError("Please enter a valid email address (e.g., jane@example.com)");
             return;
         }
+        const cleanPhone = form.phone.replace(/\D/g, ""); // removes everything that’s not a digit
+        const cleanSSN = form.ssn.replace(/\D/g, "");     // removes dashes, spaces, etc.
 
         setLoading(true);
         try {
             const { data } = await api.post("/api/loan-applications/apply", {
                 ...form,
-                requestedAmount: Number(form.requestedAmount)
+                requestedAmount: Number(form.requestedAmount),
+                monthlyIncome: Number(form.monthlyIncome),
+                phone: cleanPhone,
+                ssn: cleanSSN
             });
             setResult(data);
         } catch (err) {
@@ -89,12 +98,12 @@ export default function LoanApplication() {
 
                 <div>
                     <label>Phone</label>
-                    <input name="phone" value={form.phone} onChange={onChange} placeholder="555-1111" pattern="^\D?(\d\D?){10}$" title="Phone number must contain exactly 10 digits (e.g., 5551112222 or 555-111-2222)" required />
+                    <input name="phone" value={form.phone} onChange={onChange} placeholder="5551111" pattern="^\D?(\d\D?){10}$" title="Phone number must contain exactly 10 digits (e.g., 5551112222 or 5551112222)" required />
                 </div>
 
                 <div>
                     <label>SSN</label>
-                    <input name="ssn" value={form.ssn} onChange={onChange} placeholder="123-45-6789" pattern="^\D?(\d\D?){10}$" title="SSN must contain exactly 10 digits (e.g., 1234567890 or 123-45-6789)" required />
+                    <input name="ssn" value={form.ssn} onChange={onChange} placeholder="1234567890" pattern="^\D?(\d\D?){10}$" title="SSN must contain exactly 10 digits (e.g., 1234567890 or 123456789)" required />
                 </div>
 
                 <div>
@@ -109,7 +118,25 @@ export default function LoanApplication() {
                         required
                     />
                 </div>
-
+                <div>
+                    <label>Employment Status</label>
+                    <select name={"employmentStatus"} value={form.employmentStatus} onChange={onChange} required>
+                        <option value={""}>Select Status</option>
+                        <option value={"EMPLOYED"}>Employed</option>
+                        <option value={"UNEMPLOYED"}>Unemployed</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Monthly Income</label>
+                    <input
+                        name="monthlyIncome"
+                        type="number"
+                        value={form.monthlyIncome}
+                        onChange={onChange}
+                        placeholder="5000"
+                        required
+                    />
+                </div>
                 <div className="full" style={{ display: "flex", gap: "8px" }}>
                     <button type="submit" disabled={loading} style={{ flex: 1 }}>
                         {loading ? "Processing..." : "Apply for Loan"}
