@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../api";
+import { submitLoanApplication } from "../services/loanService";
 
 export default function LoanApplication() {
     const [form, setForm] = useState({
@@ -10,16 +10,50 @@ export default function LoanApplication() {
         ssn: "",
         requestedAmount: "",
         employmentStatus: "",
-        monthlyIncome: ""
+        monthlyIncome: "",
+        existingDebt: ""
     });
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [result, setResult] = useState(null);
+    const [errors, setErrors] = useState({});
+
+    //Centralized validation
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!form.name.trim()) newErrors.name = "Name is required.";
+        if (!form.address.trim()) newErrors.address = "Address is required.";
+        if (!form.email.trim())
+            newErrors.email = "Email is required.";
+        else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(form.email))
+            newErrors.email = "Please enter a valid email address (e.g., jane@example.com).";
+
+        const cleanPhone = form.phone.replace(/\D/g, "");
+        if (!cleanPhone) newErrors.phone = "Phone is required.";
+        else if (!/^\d{10}$/.test(cleanPhone))
+            newErrors.phone = "Phone must contain exactly 10 digits.";
+
+        const cleanSSN = form.ssn.replace(/\D/g, "");
+        if (!cleanSSN) newErrors.ssn = "SSN is required.";
+        else if (!/^\d{9,10}$/.test(cleanSSN))
+            newErrors.ssn = "SSN must contain 9–10 digits.";
+
+        if (!form.requestedAmount) newErrors.requestedAmount = "Requested amount is required.";
+        if (!form.employmentStatus) newErrors.employmentStatus = "Please select employment status.";
+        if (!form.monthlyIncome) newErrors.monthlyIncome = "Monthly income is required.";
+        if (!form.existingDebt) newErrors.existingDebt = "Existing debt is required.";
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const onChange = (e) => {
         const { name, value } = e.target;
         setForm((f) => ({ ...f, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: undefined })); // clear per-field error
     };
 
     const reset = () => {
@@ -31,8 +65,10 @@ export default function LoanApplication() {
             ssn: "",
             requestedAmount: "",
             employmentStatus: "",
-            monthlyIncome: ""
+            monthlyIncome: "",
+            existingDebt: ""
         });
+        setErrors({});
         setResult(null);
         setError(null);
     };
@@ -47,65 +83,93 @@ export default function LoanApplication() {
         setError(null);
         setResult(null);
 
-        if (Object.values(form).some((v) => !v)) {
-            setError("Please fill all fields.");
-            return;
-        }
-        if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(form.email)) {
-            setError("Please enter a valid email address (e.g., jane@example.com)");
-            return;
-        }
-        const cleanPhone = form.phone.replace(/\D/g, ""); // removes everything that’s not a digit
-        const cleanSSN = form.ssn.replace(/\D/g, "");     // removes dashes, spaces, etc.
+        if (!validateForm()) return;
 
         setLoading(true);
         try {
-            const { data } = await api.post("/api/loan-applications/apply", {
-                ...form,
-                requestedAmount: Number(form.requestedAmount),
-                monthlyIncome: Number(form.monthlyIncome),
-                phone: cleanPhone,
-                ssn: cleanSSN
-            });
+            const data = await submitLoanApplication(form);
             setResult(data);
         } catch (err) {
             console.error(err);
-            setError("Could not submit application. Is backend running on port 8080?");
+            setError("Could not submit application.");
         } finally {
             setLoading(false);
         }
     };
 
+
     return (
         <div className="card">
             <h2>Loan Application</h2>
 
-            <form onSubmit={onSubmit} className="form-grid">
+            <form onSubmit={onSubmit} className="form-grid" noValidate>
+                {/* Name */}
                 <div className="full">
                     <label>Name</label>
-                    <input name="name" value={form.name} onChange={onChange} placeholder="Jane Doe" required />
+                    <input
+                        name="name"
+                        value={form.name}
+                        onChange={onChange}
+                        placeholder="Jane Doe"
+                        aria-invalid={!!errors.name}
+                    />
+                    {errors.name && <p className="error" style={{ color: "red" }}>{errors.name}</p>}
                 </div>
 
+                {/* Address */}
                 <div className="full">
                     <label>Address</label>
-                    <input name="address" value={form.address} onChange={onChange} placeholder="123 Main St" required />
+                    <input
+                        name="address"
+                        value={form.address}
+                        onChange={onChange}
+                        placeholder="123 Main St"
+                        aria-invalid={!!errors.address}
+                    />
+                    {errors.address && <p className="error" style={{ color: "red" }}>{errors.address}</p>}
                 </div>
 
+                {/* Email */}
                 <div>
                     <label>Email</label>
-                    <input name="email" type="email" value={form.email} onChange={onChange} placeholder="jane@example.com" required />
+                    <input
+                        name="email"
+                        type="email"
+                        value={form.email}
+                        onChange={onChange}
+                        placeholder="jane@example.com"
+                        aria-invalid={!!errors.email}
+                    />
+                    {errors.email && <p className="error" style={{ color: "red" }}>{errors.email}</p>}
                 </div>
 
+                {/* Phone */}
                 <div>
                     <label>Phone</label>
-                    <input name="phone" value={form.phone} onChange={onChange} placeholder="5551111" pattern="^\D?(\d\D?){10}$" title="Phone number must contain exactly 10 digits (e.g., 5551112222 or 5551112222)" required />
+                    <input
+                        name="phone"
+                        value={form.phone}
+                        onChange={onChange}
+                        placeholder="5551112222"
+                        aria-invalid={!!errors.phone}
+                    />
+                    {errors.phone && <p className="error" style={{ color: "red" }}>{errors.phone}</p>}
                 </div>
 
+                {/* SSN */}
                 <div>
                     <label>SSN</label>
-                    <input name="ssn" value={form.ssn} onChange={onChange} placeholder="1234567890" pattern="^\D?(\d\D?){10}$" title="SSN must contain exactly 10 digits (e.g., 1234567890 or 123456789)" required />
+                    <input
+                        name="ssn"
+                        value={form.ssn}
+                        onChange={onChange}
+                        placeholder="1234567890"
+                        aria-invalid={!!errors.ssn}
+                    />
+                    {errors.ssn && <p className="error" style={{ color: "red" }}>{errors.ssn}</p>}
                 </div>
 
+                {/* Requested Loan Amount */}
                 <div>
                     <label>Requested Loan Amount</label>
                     <input
@@ -115,17 +179,28 @@ export default function LoanApplication() {
                         value={form.requestedAmount}
                         onChange={onChange}
                         placeholder="25000"
-                        required
+                        aria-invalid={!!errors.requestedAmount}
                     />
+                    {errors.requestedAmount && <p className="error" style={{ color: "red" }}>{errors.requestedAmount}</p>}
                 </div>
+
+                {/* Employment Status */}
                 <div>
                     <label>Employment Status</label>
-                    <select name={"employmentStatus"} value={form.employmentStatus} onChange={onChange} required>
-                        <option value={""}>Select Status</option>
-                        <option value={"EMPLOYED"}>Employed</option>
-                        <option value={"UNEMPLOYED"}>Unemployed</option>
+                    <select
+                        name="employmentStatus"
+                        value={form.employmentStatus}
+                        onChange={onChange}
+                        aria-invalid={!!errors.employmentStatus}
+                    >
+                        <option value="">Select Status</option>
+                        <option value="EMPLOYED">Employed</option>
+                        <option value="UNEMPLOYED">Unemployed</option>
                     </select>
+                    {errors.employmentStatus && <p className="error" style={{ color: "red" }}>{errors.employmentStatus}</p>}
                 </div>
+
+                {/* Monthly Income */}
                 <div>
                     <label>Monthly Income</label>
                     <input
@@ -134,9 +209,26 @@ export default function LoanApplication() {
                         value={form.monthlyIncome}
                         onChange={onChange}
                         placeholder="5000"
-                        required
+                        aria-invalid={!!errors.monthlyIncome}
                     />
+                    {errors.monthlyIncome && <p className="error" style={{ color: "red" }}>{errors.monthlyIncome}</p>}
                 </div>
+
+                {/* Existing Debt */}
+                <div>
+                    <label>Existing Debt</label>
+                    <input
+                        name="existingDebt"
+                        type="number"
+                        value={form.existingDebt}
+                        onChange={onChange}
+                        placeholder="2000"
+                        aria-invalid={!!errors.existingDebt}
+                    />
+                    {errors.existingDebt && <p className="error" style={{ color: "red" }}>{errors.existingDebt}</p>}
+                </div>
+
+                {/* Buttons */}
                 <div className="full" style={{ display: "flex", gap: "8px" }}>
                     <button type="submit" disabled={loading} style={{ flex: 1 }}>
                         {loading ? "Processing..." : "Apply for Loan"}
@@ -147,8 +239,10 @@ export default function LoanApplication() {
                 </div>
             </form>
 
-            {error && <div className="error">{error}</div>}
+            {/* Errors */}
+            {error && <div className="error" style={{ color: "red" }}>{error}</div>}
 
+            {/* Result */}
             {result && (
                 <div className={`result ${result.decision === "APPROVED" ? "approved" : "denied"}`}>
                     <h3>{result.decision === "APPROVED" ? "✅ Approved" : "❌ Denied"}</h3>
