@@ -203,8 +203,6 @@ export default function LoanApplication() {
                 {result && (
                     <div className={`result ${result.decision === "APPROVED" ? "approved" : "denied"}`}>
                         <h3>{result.decision === "APPROVED" ? "✅ Approved" : "❌ Denied"}</h3>
-                        <p><strong>Credit Lines:</strong> {result.creditLines}</p>
-
                         {result.decision === "DENIED" && <p><strong>Reason:</strong> {result.reason}</p>}
 
                         {result.decision === "APPROVED" && result.offer && (

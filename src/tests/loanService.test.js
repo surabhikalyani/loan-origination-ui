@@ -19,7 +19,6 @@ describe("submitLoanApplication", () => {
     it("sends api request with correct payload using env URL", async () => {
         const mockData = {
             decision: "APPROVED",
-            creditLines: 3,
             offer: {
                 totalLoanAmount: 25000,
                 interestRate: 0.075,
