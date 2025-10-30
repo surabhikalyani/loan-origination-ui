@@ -167,7 +167,7 @@ export default function LoanApplication() {
 
                 {/* Requested Loan Amount */}
                 <div>
-                    <label>Requested Loan Amount</label>
+                    <label>Requested Loan Amount (USD) </label>
                     <input
                         name="requestedAmount"
                         type="number"
