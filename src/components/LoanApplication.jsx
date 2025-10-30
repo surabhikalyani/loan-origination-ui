@@ -88,77 +88,82 @@ export default function LoanApplication() {
         }
     };
 
-
     return (
-        <div className="card">
-            <h2>Loan Application</h2>
+        <div className="page">
+            {/* Blue Header */}
+            <header className="header">
+                <h1>Reach Loan Portal</h1>
+            </header>
 
-            <form onSubmit={onSubmit} className="form-grid" noValidate>
-                {/* Name */}
-                <div className="full">
-                    <label>Name</label>
-                    <input
-                        name="name"
-                        value={form.name}
-                        onChange={onChange}
-                        placeholder="Jane Doe"
-                        aria-invalid={!!errors.name}
-                    />
-                    {errors.name && <p className="error" style={{ color: "red" }}>{errors.name}</p>}
-                </div>
+            <div className="box">
+                <h2>Loan Application</h2>
 
-                {/* Address */}
-                <div className="full">
-                    <label>Address</label>
-                    <input
-                        name="address"
-                        value={form.address}
-                        onChange={onChange}
-                        placeholder="123 Main St"
-                        aria-invalid={!!errors.address}
-                    />
-                    {errors.address && <p className="error" style={{ color: "red" }}>{errors.address}</p>}
-                </div>
+                <form onSubmit={onSubmit} className="form-grid" noValidate>
+                    {/* Name */}
+                    <div className="full">
+                        <label>Name</label>
+                        <input
+                            name="name"
+                            value={form.name}
+                            onChange={onChange}
+                            placeholder="Jane Doe"
+                            aria-invalid={!!errors.name}
+                        />
+                        {errors.name && <p className="error">{errors.name}</p>}
+                    </div>
 
-                {/* Email */}
-                <div>
-                    <label>Email</label>
-                    <input
-                        name="email"
-                        type="email"
-                        value={form.email}
-                        onChange={onChange}
-                        placeholder="jane@example.com"
-                        aria-invalid={!!errors.email}
-                    />
-                    {errors.email && <p className="error" style={{ color: "red" }}>{errors.email}</p>}
-                </div>
+                    {/* Address */}
+                    <div className="full">
+                        <label>Address</label>
+                        <input
+                            name="address"
+                            value={form.address}
+                            onChange={onChange}
+                            placeholder="123 Main St"
+                            aria-invalid={!!errors.address}
+                        />
+                        {errors.address && <p className="error">{errors.address}</p>}
+                    </div>
 
-                {/* Phone */}
-                <div>
-                    <label>Phone</label>
-                    <input
-                        name="phone"
-                        value={form.phone}
-                        onChange={onChange}
-                        placeholder="5551112222"
-                        aria-invalid={!!errors.phone}
-                    />
-                    {errors.phone && <p className="error" style={{ color: "red" }}>{errors.phone}</p>}
-                </div>
+                    {/* Email */}
+                    <div>
+                        <label>Email</label>
+                        <input
+                            name="email"
+                            type="email"
+                            value={form.email}
+                            onChange={onChange}
+                            placeholder="jane@example.com"
+                            aria-invalid={!!errors.email}
+                        />
+                        {errors.email && <p className="error">{errors.email}</p>}
+                    </div>
 
-                {/* SSN */}
-                <div>
-                    <label>SSN</label>
-                    <input
-                        name="ssn"
-                        value={form.ssn}
-                        onChange={onChange}
-                        placeholder="1234567890"
-                        aria-invalid={!!errors.ssn}
-                    />
-                    {errors.ssn && <p className="error" style={{ color: "red" }}>{errors.ssn}</p>}
-                </div>
+                    {/* Phone */}
+                    <div>
+                        <label>Phone</label>
+                        <input
+                            name="phone"
+                            value={form.phone}
+                            onChange={onChange}
+                            placeholder="5551112222"
+                            aria-invalid={!!errors.phone}
+                        />
+                        {errors.phone && <p className="error">{errors.phone}</p>}
+                    </div>
+
+                    {/* SSN */}
+                    <div>
+                        <label>SSN</label>
+                        <input
+                            name="ssn"
+                            value={form.ssn}
+                            onChange={onChange}
+                            placeholder="1234567890"
+                            aria-invalid={!!errors.ssn}
+                        />
+                        {errors.ssn && <p className="error">{errors.ssn}</p>}
+                    </div>
 
                 {/* Requested Loan Amount */}
                 <div>
@@ -175,38 +180,44 @@ export default function LoanApplication() {
                     {errors.requestedAmount && <p className="error" style={{ color: "red" }}>{errors.requestedAmount}</p>}
                 </div>
 
-                {/* Buttons */}
-                <div className="full" style={{ display: "flex", gap: "8px" }}>
-                    <button type="submit" disabled={loading} style={{ flex: 1 }}>
-                        {loading ? "Processing..." : "Apply for Loan"}
-                    </button>
-                    <button type="button" onClick={reset} disabled={loading} style={{ flex: 1, background: "#6b7280" }}>
-                        Reset
-                    </button>
-                </div>
-            </form>
+                    {/* Buttons */}
+                    <div className="actions">
+                        <button type="submit" disabled={loading}>
+                            {loading ? "Processing..." : "Apply for Loan"}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={reset}
+                            className="secondary"
+                            disabled={loading}
+                        >
+                            Reset
+                        </button>
+                    </div>
+                </form>
 
-            {/* Errors */}
-            {error && <div className="error" style={{ color: "red" }}>{error}</div>}
+                {/* Errors */}
+                {error && <div className="error-message">{error}</div>}
 
-            {/* Result */}
-            {result && (
-                <div className={`result ${result.decision === "APPROVED" ? "approved" : "denied"}`}>
-                    <h3>{result.decision === "APPROVED" ? "✅ Approved" : "❌ Denied"}</h3>
-                    <p><strong>Credit Lines:</strong> {result.creditLines}</p>
+                {/* Result */}
+                {result && (
+                    <div className={`result ${result.decision === "APPROVED" ? "approved" : "denied"}`}>
+                        <h3>{result.decision === "APPROVED" ? "✅ Approved" : "❌ Denied"}</h3>
+                        <p><strong>Credit Lines:</strong> {result.creditLines}</p>
 
-                    {result.decision === "DENIED" && <p><strong>Reason:</strong> {result.reason}</p>}
+                        {result.decision === "DENIED" && <p><strong>Reason:</strong> {result.reason}</p>}
 
-                    {result.decision === "APPROVED" && result.offer && (
-                        <>
-                            <p><strong>Total Loan Amount:</strong> {formatCurrency(result.offer.totalLoanAmount)}</p>
-                            <p><strong>Interest Rate:</strong> {(result.offer.interestRate * 100).toFixed(1)}%</p>
-                            <p><strong>Term:</strong> {result.offer.termMonths} months</p>
-                            <p><strong>Monthly Payment:</strong> {formatCurrency(result.offer.monthlyPayment)}</p>
-                        </>
-                    )}
-                </div>
-            )}
+                        {result.decision === "APPROVED" && result.offer && (
+                            <>
+                                <p><strong>Total Loan Amount:</strong> {formatCurrency(result.offer.totalLoanAmount)}</p>
+                                <p><strong>Interest Rate:</strong> {(result.offer.interestRate * 100).toFixed(1)}%</p>
+                                <p><strong>Term:</strong> {result.offer.termMonths} months</p>
+                                <p><strong>Monthly Payment:</strong> {formatCurrency(result.offer.monthlyPayment)}</p>
+                            </>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
