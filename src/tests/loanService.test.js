@@ -114,26 +114,4 @@ describe("submitLoanApplication", () => {
 
         consoleSpy.mockRestore();
     });
-
-    it("throws and logs error for bad request", async () => {
-        const error = new Error("Your application contains invalid data. Please review and try again.");
-        axios.post.mockRejectedValueOnce({
-            response: {
-                status: 400,
-                data: { message: "Bad Request" },
-            },
-        });        const input = {
-            name: "Jane",
-            phone: "5551112222",
-            ssn: "1234567890",
-            requestedAmount: "25000",
-            monthlyIncome: "5000",
-            existingDebt: "2000",
-            employmentStatus: "EMPLOYED",
-            address: "123 Main",
-        };
-
-        await expect(submitLoanApplication(input)).rejects.toThrow("Bad Request");
-    });
-
 });

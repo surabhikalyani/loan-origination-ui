@@ -43,7 +43,6 @@ describe("LoanApplication", () => {
         expect(await screen.findByText(/Phone is required./)).toBeInTheDocument();
         expect(await screen.findByText(/SSN is required./)).toBeInTheDocument();
         expect(await screen.findByText(/Requested amount is required./)).toBeInTheDocument();
-        expect(await screen.findByText(/Monthly income is required./)).toBeInTheDocument();
         expect(await screen.findByText(/Please select employment status./)).toBeInTheDocument();
         expect(await screen.findByText(/Existing debt is required./)).toBeInTheDocument();
     });

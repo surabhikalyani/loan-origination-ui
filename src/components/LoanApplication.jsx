@@ -8,10 +8,7 @@ export default function LoanApplication() {
         email: "",
         phone: "",
         ssn: "",
-        requestedAmount: "",
-        employmentStatus: "",
-        monthlyIncome: "",
-        existingDebt: ""
+        requestedAmount: ""
     });
 
     const [loading, setLoading] = useState(false);
@@ -42,9 +39,6 @@ export default function LoanApplication() {
             newErrors.ssn = "SSN must contain 9–10 digits.";
 
         if (!form.requestedAmount) newErrors.requestedAmount = "Requested amount is required.";
-        if (!form.employmentStatus) newErrors.employmentStatus = "Please select employment status.";
-        if (!form.monthlyIncome) newErrors.monthlyIncome = "Monthly income is required.";
-        if (!form.existingDebt) newErrors.existingDebt = "Existing debt is required.";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -63,10 +57,7 @@ export default function LoanApplication() {
             email: "",
             phone: "",
             ssn: "",
-            requestedAmount: "",
-            employmentStatus: "",
-            monthlyIncome: "",
-            existingDebt: ""
+            requestedAmount: ""
         });
         setErrors({});
         setResult(null);
@@ -182,50 +173,6 @@ export default function LoanApplication() {
                         aria-invalid={!!errors.requestedAmount}
                     />
                     {errors.requestedAmount && <p className="error" style={{ color: "red" }}>{errors.requestedAmount}</p>}
-                </div>
-
-                {/* Employment Status */}
-                <div>
-                    <label>Employment Status</label>
-                    <select
-                        name="employmentStatus"
-                        value={form.employmentStatus}
-                        onChange={onChange}
-                        aria-invalid={!!errors.employmentStatus}
-                    >
-                        <option value="">Select Status</option>
-                        <option value="EMPLOYED">Employed</option>
-                        <option value="UNEMPLOYED">Unemployed</option>
-                    </select>
-                    {errors.employmentStatus && <p className="error" style={{ color: "red" }}>{errors.employmentStatus}</p>}
-                </div>
-
-                {/* Monthly Income */}
-                <div>
-                    <label>Monthly Income</label>
-                    <input
-                        name="monthlyIncome"
-                        type="number"
-                        value={form.monthlyIncome}
-                        onChange={onChange}
-                        placeholder="5000"
-                        aria-invalid={!!errors.monthlyIncome}
-                    />
-                    {errors.monthlyIncome && <p className="error" style={{ color: "red" }}>{errors.monthlyIncome}</p>}
-                </div>
-
-                {/* Existing Debt */}
-                <div>
-                    <label>Existing Debt</label>
-                    <input
-                        name="existingDebt"
-                        type="number"
-                        value={form.existingDebt}
-                        onChange={onChange}
-                        placeholder="2000"
-                        aria-invalid={!!errors.existingDebt}
-                    />
-                    {errors.existingDebt && <p className="error" style={{ color: "red" }}>{errors.existingDebt}</p>}
                 </div>
 
                 {/* Buttons */}
