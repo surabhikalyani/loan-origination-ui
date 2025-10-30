@@ -18,25 +18,33 @@ It connects to a Spring Boot backend through REST APIs and demonstrates clean fu
 ## Run Instructions
 
 ### 1️⃣ Install dependencies
-```bash
+```
+bash
+
 npm install
 ```
 
 ### 2️⃣ Start the frontend
-```bash
+```
+bash
+
 npm run dev
 ```
 The app will run at 👉 http://localhost:5173
 
 ### 3️⃣ Run tests
-```bash
+```
+bash
+
 npx vitest
 ```
 
 ### 🔗 API Configuration
 
 Create a .env file in the project root:
-```bash
+```
+bash
+
 VITE_API_BASE=http://localhost:8080
 VITE_LOAN_ENDPOINT=api/loan-applications/apply
 ```
